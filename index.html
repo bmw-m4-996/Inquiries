@@ -1,0 +1,538 @@
+<!-- language: HTML, file: index.html -- single file, CSS + JS inline -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Collaboration inquiries for 𝑩𝑴𝑾 𝑴4 𖤐" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>𝑩𝑴𝑾 𝑴4 𖤐 -- Collaboration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #0a0a0a;
+      --muted: rgba(10, 10, 10, 0.5);
+      --placeholder: rgba(10, 10, 10, 0.32);
+      --line: rgba(10, 10, 10, 0.12);
+      --line-focus: rgba(10, 10, 10, 0.78);
+      --radius: 10px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg); color: var(--fg);
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400; line-height: 1.5;
+      -kit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      display: flex; justify-content: center; align-items: flex-start;
+      padding: 56px 20px 96px;
+    }
+    .shell { width: 100%; max-width: 560px; animation: rise 0.85s var(--ease) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .head { text-align: center; margin-bottom: 44px; }
+    .title { font-weight: 300; font-size: clamp(1.6rem, 5.4vw, 2.25rem); letter-spacing: 0.02em; line-height: 1.2; }
+    .subtitle { margin-top: 12px; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
+    .form { display: flex; flex-direction: column; gap: 22px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field[hidden] { display: none; }
+    .field label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); transition: color 0.3s var(--ease); }
+    .field:focus-within label { color: var(--fg); }
+    .field label .optional { letter-spacing: 0.04em; text-transform: none; opacity: 0.7; }
+    .control { position: relative; }
+    .control .icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; stroke: var(--muted); fill: none; transition: stroke 0.3s var(--ease); pointer-events: none; }
+    .field.textarea .control .icon { top: 17px; transform: none; }
+    .control:focus-within .icon { stroke: var(--fg); }
+    input, textarea, select { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); color: var(--fg); font-family: inherit; font-size: 0.92rem; font-weight: 400; padding: 15px 16px 15px 46px; outline: none; appearance: none; -kit-appearance: none; transition: border-color 0.3s var(--ease), box-shadow 0.3s var(--ease); }
+    input::placeholder, textarea::placeholder { color: var(--placeholder); }
+    input:focus, textarea:focus, select:focus { border-color: var(--line-focus); box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.05); }
+    textarea { resize: vertical; min-height: 130px; line-height: 1.65; padding-top: 15px; }
+    select { cursor: pointer; padding-right: 44px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px; }
+    select option { background: var(--bg); color: var(--fg); }
+    select:invalid, select option[value=""] { color: var(--placeholder); }
+    .error { font-size: 0.72rem; color: var(--fg); letter-spacing: 0.01em; opacity: 0; transform: translateY(-4px); transition: opacity 0.25s var(--ease), transform 0.25s var(--ease); }
+    .error.show { opacity: 1; transform: translateY(0); }
+    .field.invalid input, .field.invalid textarea, .field.invalid select { border-color: var(--fg); box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.1); animation: shake 0.38s var(--ease); }
+    .field.invalid label { color: var(--fg); }
+    .field.invalid .icon { stroke: var(--fg); }
+    @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-3px); } 40%, 60% { transform: translateX(3px); } }
+    .counter { align-self: flex-end; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.08em; font-variant-numeric: tabular-nums; transition: color 0.3s var(--ease); }
+    .counter.warn { color: var(--fg); }
+    .actions { display: flex; gap: 12px; margin-top: 6px; }
+    .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 16px 22px; border: 1px solid transparent; border-radius: var(--radius); font-family: inherit; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease), opacity 0.3s var(--ease); }
+    .btn:active:not(:disabled) { transform: scale(0.99); }
+    .btn-primary { flex: 1; background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .btn-primary:hover:not(:disabled):not(.loading) { background: transparent; color: var(--fg); }
+    .btn-primary:disabled { cursor: not-allowed; opacity: 0.85; }
+    .btn-ghost { flex: 0 0 auto; padding-inline: 26px; background: transparent; color: var(--fg); border-color: var(--line); }
+    .btn-ghost:hover:not(:disabled) { border-color: var(--fg); }
+    .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-label { transition: opacity 0.2s var(--ease); }
+    .btn-primary.loading .btn-label { opacity: 0; }
+    .spinner { position: absolute; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; opacity: 0; animation: spin 0.7s linear infinite; transition: opacity 0.2s var(--ease); }
+    .btn-primary.loading .spinner { opacity: 1; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .privacy { margin-top: 34px; font-size: 0.7rem; line-height: 1.75; color: var(--muted); text-align: center; letter-spacing: 0.015em; }
+    .toasts { position: fixed; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 999; pointer-events: none; }
+    .toast { display: flex; align-items: center; gap: 10px; max-width: 320px; padding: 13px 18px; border-radius: 8px; font-size: 0.8rem; letter-spacing: 0.015em; animation: toastIn 0.4s var(--ease) both; pointer-events: auto; }
+    .toast.success { background: var(--fg); color: var(--bg); box-shadow: 0 10px 30px rgba(10, 10, 10, 0.18); }
+    .toast.error { background: var(--bg); color: var(--fg); border: 1px solid var(--fg); box-shadow: 0 10px 30px rgba(10, 10, 10, 0.1); }
+    .toast svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .toast.leaving { animation: toastOut 0.32s var(--ease) both; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(14px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(8px) scale(0.97); } }
+    @media (max-width: 540px) {
+      body { padding: 34px 16px 100px; }
+      .head { margin-bottom: 34px; }
+      .actions { flex-direction: column-reverse; }
+      .btn-ghost { padding: 14px; }
+      .toasts { left: 16px; right: 16px; bottom: 16px; }
+      .toast { max-width: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="shell">
+    <header class="head">
+      <h1 class="title">𝑩𝑴𝑾 𝑴4 𖤐</h1>
+      <p class="subtitle">Collaboration Inquiry</p>
+    </header>
+
+    <form class="form" id="collabForm" novalidate>
+
+      <!-- Web3Forms hidden fields -->
+      <input type="hidden" name="access_key" id="accessKey" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+      <input type="hidden" name="subject" value="New Collaboration Inquiry -- 𝑩𝑴𝑾 𝑴4 𖤐" />
+      <input type="hidden" name="from_name" value="𝑩𝑴𝑾 𝑴4 𖤐 Collaboration Form" />
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+
+      <div class="field">
+        <label for="name">Full Name</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <input id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required />
+        </div>
+        <span class="error" data-for="name" role="alert"></span>
+      </div>
+
+      <div class="field">
+        <label for="email">Email Address</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3 7 9 6 9-6" />
+          </svg>
+          <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <span class="error" data-for="email" role="alert"></span>
+      </div>
+
+      <div class="field">
+        <label for="channel">YouTube Channel URL</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33Z" />
+            <path d="m9.75 15.02 5.75-3.27-5.75-3.27v6.54Z" />
+          </svg>
+          <input id="channel" name="channel" type="url" placeholder="youtube.com/@yourchannel" autocomplete="url" required />
+        </div>
+        <span class="error" data-for="channel" role="alert"></span>
+      </div>
+
+      <div class="field">
+        <label for="social">Social Media Link <span class="optional">(optional)</span></label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
+          <input id="social" name="social" type="url" placeholder="instagram.com/you" autocomplete="url" />
+        </div>
+        <span class="error" data-for="social" role="alert"></span>
+      </div>
+
+      <div class="field">
+        <label for="contactMethod">Preferred Contact Method</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" />
+          </svg>
+          <select id="contactMethod" name="contactMethod" required>
+            <option value="" disabled selected>How should we reach you?</option>
+            <option value="Email">Email (same as above)</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Telegram">Telegram</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Discord">Discord</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <span class="error" data-for="contactMethod" role="alert"></span>
+      </div>
+
+      <div class="field" id="handleField" hidden>
+        <label for="contactHandle">Your Handle / Number</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" />
+          </svg>
+          <input id="contactHandle" name="contactHandle" type="text" placeholder="" autocomplete="off" />
+        </div>
+        <span class="error" data-for="contactHandle" role="alert"></span>
+      </div>
+
+      <div class="field">
+        <label for="type">Collaboration Type</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 2 9 5-9 5-9-5 9-5Z" />
+            <path d="m3 12 9 5 9-5" />
+            <path d="m3 17 9 5 9-5" />
+          </svg>
+          <select id="type" name="type" required>
+            <option value="" disabled selected>Select a type</option>
+            <option value="Video Feature">Video Feature</option>
+            <option value="Channel Shoutout">Channel Shoutout</option>
+            <option value="Product Review">Product Review</option>
+            <option value="Guest Appearance">Guest Appearance</option>
+            <option value="Sponsorship">Sponsorship</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <span class="error" data-for="type" role="alert"></span>
+      </div>
+
+      <div class="field textarea">
+        <label for="message">Message / Collaboration Details</label>
+        <div class="control">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <textarea id="message" name="message" rows="5" maxlength="500" placeholder="What are you proposing?" required></textarea>
+        </div>
+        <span class="counter" id="counter">0 / 500</span>
+        <span class="error" data-for="message" role="alert"></span>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" id="resetBtn">Reset</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span class="btn-label">Send Inquiry</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+
+    <p class="privacy">
+      Your details are used only to respond to this inquiry and are never sold or shared.
+      Submissions are delivered directly.
+    </p>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script>
+  (() => {
+    "use strict";
+
+    /* ── SETUP ─────────────────────────────────────────────────────── */
+
+    /* Paste your Web3Forms access key here. Register at 3forms.com with
+       dr.unread@aol.com -- the address never appears in this file. */
+    const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
+
+    /* Obfuscated fallback email. Base64 of dr.unread@aol.com.
+       Used only if Web3Forms is unreachable or unconfigured.
+       Never displayed in the UI. */
+    const FALLBACK_EMAIL_B64 = "ZHIudW5yZWFkQGFvbC5jb20=";
+
+    /* ──────────────────────────────────────────────────────────────── */
+
+    const MAX_MESSAGE = 500;
+    const MIN_MESSAGE = 10;
+
+    const form          = document.getElementById("collabForm");
+    const message       = document.getElementById("message");
+    const counter       = document.getElementById("counter");
+    const submitBtn     = document.getElementById("submitBtn");
+    const resetBtn      = document.getElementById("resetBtn");
+    const toasts        = document.getElementById("toasts");
+    const contactMethod = document.getElementById("contactMethod");
+    const contactHandle = document.getElementById("contactHandle");
+    const handleField   = document.getElementById("handleField");
+    const accessKey     = document.getElementById("accessKey");
+
+    const FIELD_IDS = ["name","email","channel","social","contactMethod","contactHandle","type","message"];
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const URL_RE   = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/\S*)?$/i;
+    const field = (id) => document.getElementById(id);
+
+    const hasBackend = () =>
+      WEB3FORMS_KEY && !WEB3FORMS_KEY.includes("d50c4104-17e7-41d1-8c03-0c7bc03801e6");
+
+    if (hasBackend()) accessKey.value = WEB3FORMS_KEY;
+
+    /* ── contact method → handle field ── */
+
+    const HANDLE_PLACEHOLDERS = {
+      WhatsApp:  "+92 300 1234567",
+      Telegram:  "@yourhandle",
+      Instagram: "@yourhandle",
+      Discord:   "username or username#0000",
+      Other:     "How to reach you"
+    };
+
+    function syncHandleField() {
+      const method = contactMethod.value;
+      if (!method || method === "Email") {
+        handleField.hidden = true;
+        contactHandle.value = "";
+        setError("contactHandle", "");
+        contactHandle.removeAttribute("required");
+        return;
+      }
+      handleField.hidden = false;
+      contactHandle.placeholder = HANDLE_PLACEHOLDERS[method] || "Your handle";
+      contactHandle.setAttribute("required", "");
+    }
+
+    /* ── validation ── */
+
+    function normalizeUrl(value) {
+      const v = value.trim();
+      if (!v) return "";
+      return /^https?:\/\//i.test(v) ? v : "https://" + v;
+    }
+
+    function fieldError(id) {
+      switch (id) {
+        case "name": return field("name").value.trim().length >= 2 ? "" : "Enter your full name.";
+        case "email": return EMAIL_RE.test(field("email").value.trim()) ? "" : "Enter a valid email address.";
+        case "channel": return URL_RE.test(normalizeUrl(field("channel").value)) ? "" : "Enter a valid channel URL.";
+        case "social": {
+          const v = field("social").value.trim();
+          return !v || URL_RE.test(normalizeUrl(v)) ? "" : "Enter a valid URL or leave blank.";
+        }
+        case "contactMethod": return contactMethod.value ? "" : "Select how we can reach you.";
+        case "contactHandle": {
+          if (handleField.hidden) return "";
+          const v = contactHandle.value.trim();
+          if (!v) return "Add your " + contactMethod.value + " handle so we can reply.";
+          if (v.length < 2) return "Handle looks too short.";
+          return "";
+        }
+        case "type": return field("type").value ? "" : "Select a collaboration type.";
+        case "message": {
+          const len = field("message").value.trim().length;
+          if (len === 0) return "Add your collaboration details.";
+          if (len < MIN_MESSAGE) return "Add at least " + MIN_MESSAGE + " characters.";
+          return "";
+        }
+        default: return "";
+      }
+    }
+
+    function setError(id, text) {
+      const input = field(id);
+      if (!input) return;
+      const wrap = input.closest(".field");
+      const slot = wrap.querySelector(".error");
+      if (text) {
+        wrap.classList.add("invalid");
+        slot.textContent = text;
+        slot.classList.add("show");
+        input.setAttribute("aria-invalid", "true");
+      } else {
+        wrap.classList.remove("invalid");
+        slot.textContent = "";
+        slot.classList.remove("show");
+        input.removeAttribute("aria-invalid");
+      }
+    }
+
+    function validateAll() {
+      let valid = true, firstInvalid = null;
+      for (const id of FIELD_IDS) {
+        const err = fieldError(id);
+        setError(id, err);
+        if (err && valid) { valid = false; firstInvalid = field(id); }
+      }
+      if (firstInvalid) {
+        firstInvalid.focus({ preventScroll: true });
+        firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return valid;
+    }
+
+    /* ── ui ── */
+
+    function updateCounter() {
+      const len = message.value.length;
+      counter.textContent = len + " / " + MAX_MESSAGE;
+      counter.classList.toggle("warn", len >= MAX_MESSAGE * 0.9);
+    }
+
+    function showToast(text, type) {
+      type = type || "success";
+      const el = document.createElement("div");
+      el.className = "toast " + type;
+      el.setAttribute("role", "status");
+      el.innerHTML = type === "success"
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>';
+      const span = document.createElement("span");
+      span.textContent = text;
+      el.appendChild(span);
+      toasts.appendChild(el);
+      setTimeout(() => {
+        el.classList.add("leaving");
+        el.addEventListener("animationend", () => el.remove(), { once: true });
+      }, 4200);
+    }
+
+    function clearErrors() {
+      document.querySelectorAll(".field").forEach((f) => f.classList.remove("invalid"));
+      document.querySelectorAll(".error").forEach((e) => { e.textContent = ""; e.classList.remove("show"); });
+      FIELD_IDS.forEach((id) => { const el = field(id); if (el) el.removeAttribute("aria-invalid"); });
+    }
+
+    function resetForm(announce) {
+      form.reset();
+      clearErrors();
+      syncHandleField();
+      updateCounter();
+      if (hasBackend()) accessKey.value = WEB3FORMS_KEY;
+      if (announce) showToast("Form cleared.", "success");
+    }
+
+    /* ── fallback mailto -- email decoded at runtime, never in plain text ── */
+
+    function getFallbackEmail() {
+      try { return atob(FALLBACK_EMAIL_B64); }
+      catch { return ""; }
+    }
+
+    function openMailto(payload) {
+      const to = getFallbackEmail();
+      if (!to) { showToast("Delivery unavailable. Try again later.", "error"); return; }
+
+      const subject = "Collaboration Inquiry -- " + (payload.get("name") || "New inquiry");
+      const lines = [
+        "Name:    " + (payload.get("name") || ""),
+        "Email:   " + (payload.get("email") || ""),
+        "Channel: " + (payload.get("channel") || "")
+      ];
+      if (payload.get("social")) lines.push("Social:  " + payload.get("social"));
+      const method = payload.get("contactMethod") || "";
+      if (method && method !== "Email") lines.push("Prefers: " + method + " -- " + (payload.get("contactHandle") || ""));
+      else if (method) lines.push("Prefers: Email");
+      lines.push("Type:    " + (payload.get("type") || ""));
+      lines.push("");
+      lines.push(payload.get("message") || "");
+
+      window.location.href = "mailto:" + to
+        + "?subject=" + encodeURIComponent(subject)
+        + "&body=" + encodeURIComponent(lines.join("\n"));
+    }
+
+    /* ── submit ── */
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      if (!validateAll()) {
+        showToast("Fix the highlighted fields before sending.", "error");
+        return;
+      }
+
+      submitBtn.classList.add("loading");
+      submitBtn.disabled = true;
+      resetBtn.disabled = true;
+
+      const payload = new FormData(form);
+      payload.set("channel", normalizeUrl(field("channel").value));
+
+      const socialValue = field("social").value.trim();
+      if (socialValue) payload.set("social", normalizeUrl(socialValue));
+      else payload.delete("social");
+
+      if (contactMethod.value === "Email") payload.delete("contactHandle");
+
+      /* No backend configured -- fall back to obfuscated mailto */
+      if (!hasBackend()) {
+        openMailto(payload);
+        showToast("Opening your email app with the inquiry ready to send.", "success");
+        resetForm(false);
+        finish();
+        return;
+      }
+
+      /* Web3Forms POST -- email address is never in this file */
+      try {
+        const response = await fetch("https://api.3forms.com/submit", {
+          method: "POST",
+          body: payload,
+          headers: { Accept: "application/json" }
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.ok && data && data.success) {
+          showToast("Inquiry sent. You will hear back soon.", "success");
+          resetForm(false);
+        } else {
+          openMailto(payload);
+          showToast("Server error -- opening your email app as backup.", "error");
+          resetForm(false);
+        }
+      } catch {
+        openMailto(payload);
+        showToast("Network unavailable -- opening your email app as backup.", "error");
+        resetForm(false);
+      }
+
+      finish();
+    }
+
+    function finish() {
+      submitBtn.classList.remove("loading");
+      submitBtn.disabled = false;
+      resetBtn.disabled = false;
+    }
+
+    /* ── live revalidation ── */
+
+    function bindLiveValidation() {
+      FIELD_IDS.forEach((id) => {
+        const input = field(id);
+        if (!input) return;
+        const wrap = input.closest(".field");
+        const check = () => { if (wrap.classList.contains("invalid")) setError(id, fieldError(id)); };
+        input.addEventListener("blur", check);
+        input.addEventListener(input.tagName === "SELECT" ? "change" : "input", check);
+      });
+    }
+
+    form.addEventListener("submit", handleSubmit);
+    resetBtn.addEventListener("click", () => resetForm(true));
+    message.addEventListener("input", updateCounter);
+    contactMethod.addEventListener("change", syncHandleField);
+
+    syncHandleField();
+    updateCounter();
+    bindLiveValidation();
+  })();
+  </script>
+</body>
+</html>
